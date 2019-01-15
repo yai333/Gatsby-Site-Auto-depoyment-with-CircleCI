@@ -1,0 +1,77 @@
+defaults: &defaults
+  docker:
+    - image: circleci/node:8
+
+version: 2
+jobs:
+  node:
+    working_directory: ~/gatsbyBlog
+    <<: *defaults
+    steps:
+      - checkout:
+          path: ~/gatsbyBlog/
+      - attach_workspace:
+          at: ~/gatsbyBlog/
+      - restore_cache:
+          key: npm-v2-{{ checksum "package-lock.json" }}-{{ arch }}
+
+      - restore_cache:
+          key: node-v2-{{ checksum "package.json" }}-{{ arch }}
+
+      - run: npm install
+
+      - save_cache:
+          key: npm-v2-{{ checksum "package-lock.json" }}-{{ arch }}
+          paths:
+            - ~/.cache/npm
+
+      - save_cache:
+          key: node-v2-{{ checksum "package.json" }}-{{ arch }}
+          paths:
+            - node_modules
+
+      - persist_to_workspace:
+          root: ~/gatsbyBlog
+          paths:
+            - node_modules
+  lint:
+    <<: *defaults
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/gatsbyBlog
+      - run: npm run lint
+
+  gatsby-deploy:
+    working_directory: ~/gatsbyBlog
+    <<: *defaults
+    steps:
+      - checkout:
+          path: ~/gatsbyBlog/
+      - attach_workspace:
+          at: ~/gatsbyBlog
+      - run:
+          command: |
+            CI=false npm run build:ci
+            aws s3 sync build/ s3://neami.blue  --region ap-southeast-2 --delete
+          working_directory: ios
+
+workflows:
+  version: 2
+  front-backend:
+    jobs:
+      - node:
+          filters:
+            branches:
+              only:
+                - master
+      - lint:
+          requires:
+            - node
+      - gatsby-deploy:
+          requires:
+            - lint
+          filters:
+            branches:
+              only:
+                - master
