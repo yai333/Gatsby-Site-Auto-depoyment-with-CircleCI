@@ -2,9 +2,9 @@
 
 This is a sample uses CircleCI Restful API trigger and Github push trigger Gatsby site build and deploy to S3 continuously
 
-1.  **Install Gatsby Cli as development dependencies **
+1.  **Install Gatsby Cli as development dependencies**
 
-    CircleCi can use the Gatsby CLI `node_modules/.bin/gatsby` to create a new site, specifying the blog starter.
+    CircleCI will need to use Gatsby CLI node_modules/.bin/gatsby to rebuild static site.
 
     ```sh
     npm install --save-dev gatsby-cli
