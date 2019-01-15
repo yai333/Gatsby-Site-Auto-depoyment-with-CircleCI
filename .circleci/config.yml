@@ -12,18 +12,11 @@ jobs:
           path: ~/gatsbyBlog/
       - attach_workspace:
           at: ~/gatsbyBlog/
-      - restore_cache:
-          key: npm-v2-{{ checksum "package-lock.json" }}-{{ arch }}
 
       - restore_cache:
           key: node-v2-{{ checksum "package.json" }}-{{ arch }}
 
       - run: npm install
-
-      - save_cache:
-          key: npm-v2-{{ checksum "package-lock.json" }}-{{ arch }}
-          paths:
-            - ~/.cache/npm
 
       - save_cache:
           key: node-v2-{{ checksum "package.json" }}-{{ arch }}
@@ -35,6 +28,7 @@ jobs:
           paths:
             - node_modules
   lint:
+    working_directory: ~/gatsbyBlog
     <<: *defaults
     steps:
       - checkout
@@ -52,9 +46,9 @@ jobs:
           at: ~/gatsbyBlog
       - run:
           command: |
+            sudo apt-get -y -qq install awscli
             CI=false npm run build:ci
-            aws s3 sync build/ s3://gatsby-ci-demo  --region ap-southeast-2 --delete
-          working_directory: ios
+            aws s3 sync public/ s3://gatsby-ci-demo  --region ap-southeast-2 --delete
 
 workflows:
   version: 2
