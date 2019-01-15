@@ -4,7 +4,7 @@ defaults: &defaults
 
 version: 2
 jobs:
-  node:
+  pre-build:
     working_directory: ~/gatsbyBlog
     <<: *defaults
     steps:
@@ -60,14 +60,14 @@ workflows:
   version: 2
   front-backend:
     jobs:
-      - node:
+      - pre-build:
           filters:
             branches:
               only:
                 - master
       - lint:
           requires:
-            - node
+            - pre-build
       - gatsby-deploy:
           requires:
             - lint
