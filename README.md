@@ -16,7 +16,7 @@ This is a sample uses CircleCI Restful API trigger and Github push trigger Gatsb
 
 3.  **Trigger CircleCI Project Build from CI Restful API**
 
-    You can tell CircleCi to build and deploy your site by CircleCI's Restful API
+    You can tell CircleCi to build and deploy your site by calling CircleCI's Restful API
 
     ```
     curl -X POST https://circleci.com/api/v1.1/project/:vcs-type/:username/:project/build?circle-token=:token
