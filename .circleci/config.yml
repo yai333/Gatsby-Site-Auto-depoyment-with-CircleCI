@@ -38,8 +38,7 @@ jobs:
 
   gatsby-deploy:
     working_directory: ~/gatsbyBlog
-    docker:
-      - image: yai111/circleci_awscli:0.1.0
+    <<: *defaults
     steps:
       - checkout:
           path: ~/gatsbyBlog/
@@ -47,9 +46,9 @@ jobs:
           at: ~/gatsbyBlog
       - run:
           command: |
+            sudo apt-get -y -qq install awscli
             CI=false npm run build:ci
             aws s3 sync build/ s3://gatsby-ci-demo  --region ap-southeast-2 --delete
-          working_directory: ios
 
 workflows:
   version: 2
