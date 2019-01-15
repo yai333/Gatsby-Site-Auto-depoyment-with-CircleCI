@@ -38,7 +38,8 @@ jobs:
 
   gatsby-deploy:
     working_directory: ~/gatsbyBlog
-    <<: *defaults
+    docker:
+      - image: yai111/circleci_awscli:0.1.0
     steps:
       - checkout:
           path: ~/gatsbyBlog/
